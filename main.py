@@ -9,13 +9,15 @@ from sklearn.preprocessing import LabelEncoder
 
 from neural_network import NeuralNetwork
 
-path = 'data'
+path = "data"
 
-# informacoes gerais
-epocas = 50
-lr = 0.001
-arquitetura = [64, 32]
-regularizacao = 0.2
+# informações para realizar os testes do modelo
+print("Configuração do modelo")
+epocas = int(input("Quantidade de épocas: "))
+lr = float(input("Taxa de aprendizado: "))
+largura = int(input("Largura da rede: "))
+profundidade = int(input("Profundidade da rede: "))
+regularizacao = float(input("Regularização: "))
 
 # encontrar arquivo csv
 csv_file = None
@@ -64,7 +66,10 @@ y_train = torch.LongTensor(y_train.values)
 y_test = torch.LongTensor(y_test.values)
 
 # criar rede neural
-model = NeuralNetwork(input_size=X_train.shape[1], hidden_layers=arquitetura, dropout=regularizacao)
+
+model = NeuralNetwork(
+    input_size=X_train.shape[1], largura=largura, profundidade=profundidade,dropout=regularizacao
+)
 
 print("\nModelo:")
 print(model)
@@ -72,27 +77,54 @@ print(model)
 # função de perda
 criterion = nn.CrossEntropyLoss()
 
-# otimizador
-otimizador = torch.optim.Adam(model.parameters(), lr=lr)
+# Métodos de otimização a serem utilizados
+print("\nMétodos de otimização:")
+print("1 - Adam")
+print("2 - RMSprop")
+print("3 - SGD")
+print("4 - ASGD")
+
+opcao = int(input("Escolha o otimizador: "))
+
+if opcao == 1:
+    otimizador = torch.optim.Adam(model.parameters(), lr=lr)
+    nome_otimizador = "Adam"
+
+elif opcao == 2:
+    otimizador = torch.optim.RMSprop(model.parameters(), lr=lr)
+    nome_otimizador = "RMSprop"
+
+elif opcao == 3:
+    otimizador = torch.optim.SGD(model.parameters(), lr=lr)
+    nome_otimizador = "SGD"
+
+elif opcao == 4:
+    otimizador = torch.optim.ASGD(model.parameters(), lr=lr)
+    nome_otimizador = "ASGD"
+
+else:
+    raise ValueError("Opção inválida")
 
 # treinamento
-for epoch in range(epochs):
+for epoca in range(epocas):
     model.train()
     outputs = model(X_train)
     loss = criterion(outputs, y_train)
-    optimizer.zero_grad()
+    otimizador.zero_grad()
     loss.backward()
-    optimizer.step()
-    if (epoch + 1) % 10 == 0:
+    otimizador.step()
+    if (epoca + 1) % 10 == 0:
         model.eval()
         with torch.no_grad():
             test_outputs = model(X_test)
             test_loss = criterion(test_outputs, y_test)
+
         print(
-            f"Epoch {epoch + 1}/{epochs} | "
+            f"Epoch {epoca + 1}/{epocas} | "
             f"Train Loss: {loss.item():.4f} | "
             f"Test Loss: {test_loss.item():.4f}"
         )
+
 
 # avaliação
 model.eval()
@@ -102,16 +134,13 @@ with torch.no_grad():
     train_accuracy = (train_predictions == y_train).float().mean()
     test_accuracy = (test_predictions == y_test).float().mean()
 
+# resultados e configuração
 print("\nResultados")
-
-print("treino:", train_accuracy.item())
-print("teste:", test_accuracy.item())
-
-# configuração utilizada
-
-print("\nConfiguração")'
-
-print("Arquitetura:", arquitetura)
-print("Épocas:", epochs)
-print("Learning Rate:", lr)
+print("Treino:", train_accuracy.item())
+print("Teste :", test_accuracy.item())
+print("\nConfiguração escolhida")
+print("Largura:", largura)
+print("Profundidade:", profundidade)
+print("Épocas:", epocas)
+print("Taxa de aprendizado:", lr)
 print("Regularização:", regularizacao)
