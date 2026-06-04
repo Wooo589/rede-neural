@@ -62,6 +62,7 @@ python main.py
 | 3 | 0.0 | RMSprop |
 
 ### Explicações adicionais
-    - O otimizador Adam apresentou convergência rápida e resultados consistentes durante os experimentos.
-    - O RMSprop também apresentou desempenho satisfatório, porém sem ganhos significativos em relação ao Adam para este conjunto de dados.
-    - Diante da rotina da faculdade, não foi possível trabalhar em um cenário para verificar overfitting. 
+
+- O otimizador Adam apresentou convergência rápida e resultados consistentes durante os experimentos.
+- O RMSprop também apresentou desempenho satisfatório, porém sem ganhos significativos em relação ao Adam para este conjunto de dados.
+- Diante da rotina da faculdade, não foi possível trabalhar em um cenário para verificar overfitting. 
